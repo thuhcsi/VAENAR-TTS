@@ -232,7 +232,7 @@ class Hparams:
 
 class LJHPS:
     class Train:
-        random_seed = 12
+        random_seed = 123456
         epochs = 2000
         warm_epochs = 0
         train_batch_size = 32
