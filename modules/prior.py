@@ -151,28 +151,9 @@ class TransformerPrior(BasePrior):
         logprobs += accum_logdet
         return logprobs
 
-    def sample(self, targets_lengths, n_samples, condition_inputs,
-               condition_lengths=None, training=None, temperature=1.0):
+    def sample(self, targets_lengths, condition_inputs, condition_lengths=None, training=None, temperature=1.0):
         # 1. get initial noise
-        max_inputs_len = tf.math.reduce_max(targets_lengths)
-        targets_lengths = tf.tile(
-            tf.expand_dims(targets_lengths, axis=-1), tf.constant([1, n_samples]))
-        targets_lengths = tf.reshape(targets_lengths, [-1])
         epsilon, logprobs = self._initial_sample(targets_lengths, temperature=temperature)  # [batch*n_samples, ]
-        # 2. expand condition inputs
-        batch_size = tf.shape(condition_inputs)[0]
-        max_cond_len = tf.shape(condition_inputs)[1]
-        cond_dim = tf.shape(condition_inputs)[2]
-        condition_inputs = tf.tile(
-            tf.expand_dims(condition_inputs, axis=1),  # [batch, 1, max_time, dim]
-            tf.constant([1, n_samples, 1, 1]))  # [batch, n_samples, max_time, dim]
-        condition_inputs = tf.reshape(condition_inputs,
-                                      [batch_size * n_samples, max_cond_len, cond_dim])
-        # condition_inputs.set_shape([None, None, 2 * HPS.Encoder.Tacotron.lstm_hidden])
-        if condition_lengths is not None:
-            condition_lengths = tf.tile(tf.expand_dims(condition_lengths, axis=-1),
-                                        tf.constant([1, n_samples]))
-            condition_lengths = tf.reshape(condition_lengths, [-1])
         z = epsilon
         for step in self.glow:
             actnorm, linear, affine_coupling = step
@@ -185,8 +166,6 @@ class TransformerPrior(BasePrior):
                                                  condition_lengths=condition_lengths,
                                                  training=training)
             logprobs -= logdet
-        z = tf.reshape(z, [batch_size, n_samples, max_inputs_len, self.channels])
-        logprobs = tf.reshape(logprobs, [batch_size, n_samples])
         return z, logprobs
 
     def init(self, conditions, targets_lengths, condition_lengths, training=None):

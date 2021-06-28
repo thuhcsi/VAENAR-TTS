@@ -14,6 +14,24 @@ from datasets import TFRecordWriter
 from configs import LJHPS, DataBakerHPS, Logger
 
 
+def set_seeds(seed):
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    random.seed(seed)
+    tf.random.set_seed(seed)
+    np.random.seed(seed)
+    return
+
+
+def set_global_determinism(seed):
+    set_seeds(seed=seed)
+
+    os.environ['TF_DETERMINISTIC_OPS'] = '1'
+    os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
+    # tf.config.threading.set_inter_op_parallelism_threads(1)
+    # tf.config.threading.set_intra_op_parallelism_threads(1)
+    return
+
+
 def main():
     parser = argparse.ArgumentParser('Training parameters parser')
     parser.add_argument('--dataset', type=str, choices=['ljspeech', 'databaker'],
@@ -31,9 +49,10 @@ def main():
 
     hparams = {'ljspeech': LJHPS, 'databaker': DataBakerHPS}[args.dataset]
     # set random seed
-    random.seed(hparams.Train.random_seed)
-    np.random.seed(hparams.Train.random_seed)
-    tf.random.set_seed(hparams.Train.random_seed)
+    # random.seed(hparams.Train.random_seed)
+    # np.random.seed(hparams.Train.random_seed)
+    # tf.random.set_seed(hparams.Train.random_seed)
+    set_global_determinism(hparams.Train.random_seed)
 
     # set up test utils
     tester = TestUtils(hparams, args.test_dir)

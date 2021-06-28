@@ -201,11 +201,9 @@ class VAENAR(tf.keras.Model):
         text_pos_step = self.mel_text_len_ratio / tf.cast(reduction_factor, tf.float32)
         text_embd = self.text_encoder(inputs, text_lengths, pos_step=text_pos_step, training=False)
         prior_latents, prior_logprobs = self.prior.sample(reduced_mel_lens,
-                                                          1,
                                                           text_embd,
                                                           text_lengths,
                                                           training=False)
-        prior_latents = tf.squeeze(prior_latents, axis=1)
         _, predicted_mel, dec_alignments = self.decoder(
             inputs=prior_latents, text_embd=text_embd, z_lengths=reduced_mel_lens,
             text_lengths=text_lengths, training=False, reduction_factor=reduction_factor)

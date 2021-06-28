@@ -66,8 +66,7 @@ def synthesize_from_text():
         reduced_pred_ml = (predicted_m_l + 80 + hparams.Common.final_reduction_factor - 1
                            ) // hparams.Common.final_reduction_factor
         prior_latents, prior_logprobs = model.prior.sample(
-            reduced_pred_ml, 1, text_embd, t_l, training=False, temperature=args.temperature)
-        prior_latents = tf.squeeze(prior_latents, axis=1)
+            reduced_pred_ml, text_embd, t_l, training=False, temperature=args.temperature)
         _, prior_dec_outs, prior_dec_alignments = model.decoder(
             prior_latents, text_embd, reduced_pred_ml, t_l, training=False)
         return prior_dec_outs, predicted_m_l + 80, prior_dec_alignments
@@ -137,8 +136,7 @@ def inference_test():
         reduced_pred_ml = (predicted_m_l + 80 + hparams.Common.final_reduction_factor - 1
                            ) // hparams.Common.final_reduction_factor
         prior_latents, prior_logprobs = model.prior.sample(
-            reduced_pred_ml, 1, text_embd, t_l, training=False, temperature=args.temperature)
-        prior_latents = tf.squeeze(prior_latents, axis=1)
+            reduced_pred_ml, text_embd, t_l, training=False, temperature=args.temperature)
         _, prior_dec_outs, prior_dec_alignments = model.decoder(
             prior_latents, text_embd, reduced_pred_ml, t_l, training=False,
             reduction_factor=hparams.Common.final_reduction_factor)
