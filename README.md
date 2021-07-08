@@ -1,7 +1,7 @@
 # VAENAR-TTS
 This repo contains code accompanying the paper "VAENAR-TTS: Variational Auto-Encoder based Non-AutoRegressive Text-to-Speech Synthesis".
 
-## Samples are [here](https://light1726.github.io/vaenar-tts/)
+##  [Samples](https://light1726.github.io/vaenar-tts/) | [Paper](https://arxiv.org/abs/2107.03298.) | [Pretrained Models](https://drive.google.com/drive/folders/1Xe9v_XfMUgqC0ztIW0evsUq9SNx3GLlS?usp=sharing)
 
 ## Usage
 
